@@ -1,0 +1,27 @@
+---
+- name : To install the mando-db
+  hosts: appserver
+  become: yes
+  tasks:
+    - name: To get the gpk packages
+      uri: https://www.mongodb.org/static/pgp/server-4.4.asc
+    - name: sudo apt-key add -
+      ansible.builtin.apt_key:
+        url: https://www.mongodb.org/static/pgp/server-4.4.asc
+        state: present
+    - name: To get some details frm repo
+      ansible.builtin.apt_repository:
+        repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse"
+        state: present
+    - name: To excute the command by using the shell command
+      shell: sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+    - name: To install the mongodg
+      ansible.builtin.package:
+        name: mongodb-org
+        state: present
+        update_cache: yes
+    - name: To start the mongod.service
+      ansible.builtin.systemd:
+        name: mongod.service
+        state: started
+    
